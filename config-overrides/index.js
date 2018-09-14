@@ -5,7 +5,8 @@ const {
   addBeforeRule,
 } = require('./utilities')
 const {
-  rewireBlockstackDevServer
+  rewireBlockstackBuild,
+  rewireBlockstackDevServer,
 } = require('react-app-rewire-blockstack')
 
 module.exports = {
@@ -38,6 +39,10 @@ module.exports = {
       eslintLoaderMatcher,
       stylelintRules,
     )
+
+    if(env === 'production') {
+      config = rewireBlockstackBuild(config)
+    }
 
     return config
 
