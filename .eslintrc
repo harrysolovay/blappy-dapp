@@ -1,0 +1,30 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "google"
+  ],
+  "plugins": [
+    "react"
+  ],
+  "rules": {
+    "react/react-in-jsx-scope": 0,
+    "semi": [2, "never"],
+    "object-curly-spacing": 0,
+    "eol-last": [2, "never"],
+    "require-jsdoc": 0,
+    "no-unused-vars": [2, {
+      "vars": "all",
+      "args": "none",
+      "ignoreRestSiblings": true
+    }],
+    "react/jsx-uses-vars": 2,
+    "space-before-function-paren": [2, "always"],
+    "padded-blocks": 0,
+    "no-invalid-this": 0,
+    "array-bracket-spacing": 0,
+    "no-trailing-spaces": 0,
+    "brace-style": 0,
+    "one-var": 0,
+    "guard-for-in": 0
+  }
+}
