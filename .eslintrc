@@ -12,7 +12,7 @@
     "object-curly-spacing": 0,
     "eol-last": [2, "never"],
     "require-jsdoc": 0,
-    "no-unused-vars": [2, {
+    "no-unused-vars": [0, {
       "vars": "all",
       "args": "none",
       "ignoreRestSiblings": true
@@ -26,6 +26,6 @@
     "brace-style": 0,
     "one-var": 0,
     "guard-for-in": 0,
-    "max-len": 0
+    "max-len": 0,
   }
 }

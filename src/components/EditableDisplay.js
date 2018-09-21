@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { Component } from 'react'
 import {
   Button,
   ExternalLink,
@@ -22,7 +23,6 @@ const EditableDisplayContainer = styled.div`
     padding-right: 10px;
     margin-bottom: 10px;
     border-radius: 3px;
-    background-color: #8a88e0;
   `}
   > div {
     display: flex;
@@ -49,47 +49,57 @@ const EditableDisplayContainer = styled.div`
   }
 `
 
-export default ({ id, boardStore }) => {
+export default class EditableDisplay extends Component {
 
-  const value = boardStore.get(id)
-  let newValue = value
-  const isALink = Object.keys(boardStore.state.links).includes(id)
-  const editing = boardStore.getEditingStatus(id)
+  state = {
+    value: this.props.boardStore.get(this.props.id),
+  }
 
-  return <EditableDisplayContainer { ...{ isALink }}>
-    <IoIosMove />
-    <div>
-      {
-        editing
-          ? <input
-            autoFocus
-            type='text'
-            placeholder={ isALink ? 'my list' : 'mylink.io' }
-            defaultValue={ value }
-            onChange={({ target: { value } }) => newValue = value}
-          />
-          : isALink
-            ? <ExternalLink
-              href={ value }
-              children={ value }
-            />
-            : <p children={ value } />
-      }
-    </div>
-    {
-      editing
-        ? <Fragment>
-          <Button onClick={() => boardStore.set(id, newValue)}>
-            <IoIosCheckmark size={ 32 } />
-          </Button>
-          <Button onClick={() => boardStore.delete(id)}>
-            <IoIosTrash />
-          </Button>
-        </Fragment>
-        : <Button onClick={() => boardStore.setEditingStatus(id, true)}>
-          <IoIosBrush />
-        </Button>
-        
-    }
-  </EditableDisplayContainer>
+  render () {
+
+    const defaultValue = this.props.boardStore.get(this.props.id)
+    const isALink = Object.keys(this.props.boardStore.state.links).includes(this.props.id)
+    const editing = this.props.boardStore.getEditingStatus(this.props.id)
+
+    return (
+      <EditableDisplayContainer { ...{ isALink }}>
+        <div>
+          {
+            editing
+              ? <input
+                autoFocus
+                type='text'
+                placeholder={ isALink ? 'mylink.io' : 'my list' }
+                { ...{ defaultValue }}
+                onChange={({ target: { value } }) => {
+                  if (!value) value = ''
+                  this.setState({ value })
+                }}
+              />
+              : isALink
+                ? <ExternalLink
+                  href={ this.state.value }
+                  children={ this.state.value }
+                />
+                : <p children={ this.state.value } />
+          }
+        </div>
+        {
+          editing
+            ? <Fragment>
+              <Button onClick={() => this.props.boardStore.set(this.props.id, this.state.value)}>
+                <IoIosCheckmark size={ 32 } />
+              </Button>
+              <Button onClick={() => this.props.boardStore.delete(this.props.id)}>
+                <IoIosTrash />
+              </Button>
+            </Fragment>
+            : <Button onClick={() => this.props.boardStore.setEditingStatus(this.props.id, true)}>
+              <IoIosBrush />
+            </Button>
+            
+        }
+      </EditableDisplayContainer>
+    )
+  }
 }

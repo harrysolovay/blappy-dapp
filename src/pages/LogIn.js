@@ -58,7 +58,7 @@ export default () =>
       <Banner>
         <a
           href='#'
-          children='learn to build this dapp from scratch'
+          children=''
         />
       </Banner>
       <Center>
@@ -103,7 +103,7 @@ export default () =>
         <a
           href='https://blockstack.org/'
           children={
-            `copyright © ${ new Date().getFullYear() }, Blockstack`
+            `This dapp was build with Blockstack`
           }
         />
       </Banner>

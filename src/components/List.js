@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-const StyledList = styled.div`
+export default styled.div`
   padding: 10px;
   > div {
     padding: 0px 10px 10px 10px;
@@ -14,7 +14,3 @@ const StyledList = styled.div`
     }
   }
 `
-export default (props) =>
-  <StyledList>
-    <div { ...props } />
-  </StyledList>

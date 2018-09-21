@@ -6,7 +6,7 @@ import {
 } from '~/utilities'
 import { Provider, Subscribe } from 'unstated'
 import { User as UserStore } from '~/stores'
-import { Board, LogIn } from '~/pages'
+import { NewBoard, LogIn } from '~/pages'
 
 setGlobalStyles()
 
@@ -15,16 +15,13 @@ class App extends Component {
     return (
       <Provider>
         <Subscribe to={[ UserStore ]}>
-          {(user) => {
-            console.log('the user', user)
-            return (
-              user.state.loading
-                ? <div>Loading</div>
-                : user.state.loggedIn
-                  ? <Board />
-                  : <LogIn />
-            )
-          }}
+          {(user) => (
+            user.state.loading
+              ? <div>Loading</div>
+              : user.state.loggedIn
+                ? <NewBoard />
+                : <LogIn />
+          )}
         </Subscribe>
       </Provider>
     )

@@ -30,16 +30,46 @@ const INITIAL_STATE = {
   listOrder: [],
 }
 
+// const TEST_STATE = {
+//   // tasks > links
+//   // content > body
+//   links: {
+//     'task-1': { id: 'task-1', body: 'Take out the garbage', isBeingEdited: true },
+//     'task-2': { id: 'task-2', body: 'Watch my favorite show', isBeingEdited: true },
+//     'task-3': { id: 'task-3', body: 'Charge my phone', isBeingEdited: true },
+//     'task-4': { id: 'task-4', body: 'Cook dinner', isBeingEdited: true },
+//   },
+//   // columns > lists
+//   // taskIds > linkIds
+//   lists: {
+//     'column-1': {
+//       id: 'column-1',
+//       title: 'To do',
+//       linkIds: ['task-1', 'task-2', 'task-3', 'task-4'],
+//       isBeingEdited: true,
+//     },
+//     'column-2': {
+//       id: 'column-2',
+//       title: 'In progress',
+//       linkIds: [],
+//       isBeingEdited: true,
+//     },
+//   },
+//   // Facilitate reordering of the columns
+//   listOrder: ['column-1', 'column-2'],
+// }
+
 export default class Board extends Container {
 
   state = INITIAL_STATE
 
   // constructor () {
   //   super()
-  //   putFile('STATE', JSON.stringify(INITIAL_STATE))
+  //   putFile('STATE', JSON.stringify(this.state))
   // }
 
   refresh = () => {
+    console.log('the retrieved state')
     getFile('STATE').then((state) => {
       if (state) {
         this.setState(() => JSON.parse(state))
@@ -47,6 +77,7 @@ export default class Board extends Container {
     }).catch((error) => {
       console.error(error)
     })
+    // console.log('not refreshing ;)')
   }
 
   storeState = () => {
@@ -61,8 +92,8 @@ export default class Board extends Container {
       newState.lists[newListId] = {
         id: newListId,
         title: '',
-        links: [],
-        editing: true,
+        linkIds: [],
+        isBeingEdited: true,
       }
       newState.listOrder.push(newListId)
       return newState
@@ -71,15 +102,14 @@ export default class Board extends Container {
 
   newLink = (listId) => {
     this.setState((lastState) => {
-      const
-        newState = { ...lastState },
-        newLinkId = generateUniqueId()
+      const newState = { ...lastState }
+      const newLinkId = generateUniqueId()
       newState.links[newLinkId] = {
         id: newLinkId,
         body: '',
         isBeingEdited: true,
       }
-      newState.lists[listId].links.push(newLinkId)
+      newState.lists[listId].linkIds.push(newLinkId)
       return newState
     }, this.storeState)
   }
@@ -119,15 +149,19 @@ export default class Board extends Container {
       this.setState((lastState) => {
         const newState = { ...lastState }
         delete newState.lists[id]
+        const deletionIndex = newState.listOrder.indexOf(id)
+        if (deletionIndex >= 0) {
+          newState.listOrder.splice(deletionIndex, 1)
+        }
         return newState
       }, this.storeState)
     }, () => {
       this.setState((lastState) => {
         const newState = { ...lastState }
         for (let key in newState.lists) {
-          const deletionIndex = newState.lists[key].links.indexOf(id)
+          const deletionIndex = newState.lists[key].linkIds.indexOf(id)
           if (deletionIndex >= 0) {
-            newState.lists[key].links.splice(deletionIndex, 1)
+            newState.lists[key].linkIds.splice(deletionIndex, 1)
             break
           }
         }
@@ -163,8 +197,82 @@ export default class Board extends Container {
     })
   }
 
-  setNewOrder = (e) => {
-    console.log(e)
+  onDragEnd = (result) => {
+
+    const { destination, source, draggableId, type } = result
+
+    if (!destination) {
+      return
+    }
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return
+    }
+
+    if (type === 'list') {
+      const newColumnOrder = Array.from(this.state.listOrder)
+      newColumnOrder.splice(source.index, 1)
+      newColumnOrder.splice(destination.index, 0, draggableId)
+      const newState = {
+        ...this.state,
+        listOrder: newColumnOrder,
+      }
+      this.setState(newState, this.storeState)
+      return
+    }
+
+    const home = this.state.lists[source.droppableId]
+    const foreign = this.state.lists[destination.droppableId]
+
+    if (home === foreign) {
+      const newTaskIds = Array.from(home.linkIds)
+      newTaskIds.splice(source.index, 1)
+      newTaskIds.splice(destination.index, 0, draggableId)
+
+      const newHome = {
+        ...home,
+        linkIds: newTaskIds,
+      }
+
+      const newState = {
+        ...this.state,
+        lists: {
+          ...this.state.lists,
+          [newHome.id]: newHome,
+        },
+      }
+
+      this.setState(newState, this.storeState)
+      return
+    }
+
+    // moving from one list to another
+    const homeTaskIds = Array.from(home.linkIds)
+    homeTaskIds.splice(source.index, 1)
+    const newHome = {
+      ...home,
+      linkIds: homeTaskIds,
+    }
+
+    const foreignTaskIds = Array.from(foreign.linkIds)
+    foreignTaskIds.splice(destination.index, 0, draggableId)
+    const newForeign = {
+      ...foreign,
+      linkIds: foreignTaskIds,
+    }
+
+    const newState = {
+      ...this.state,
+      lists: {
+        ...this.state.lists,
+        [newHome.id]: newHome,
+        [newForeign.id]: newForeign,
+      },
+    }
+    this.setState(newState, this.storeState)
   }
 
 }
