@@ -63,10 +63,10 @@ export default class Board extends Container {
 
   state = INITIAL_STATE
 
-  // constructor () {
-  //   super()
-  //   putFile('STATE', JSON.stringify(this.state))
-  // }
+  constructor () {
+    super()
+    putFile('STATE', JSON.stringify(this.state))
+  }
 
   refresh = () => {
     console.log('the retrieved state')
