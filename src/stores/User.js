@@ -9,7 +9,6 @@ import {
 } from 'blockstack'
 
 const INITIAL_STATE = {
-  isLoading: true,
   loggedIn: false,
   username: null,
   name: null,
@@ -44,20 +43,13 @@ export default class User extends Container {
 
   refresh = async () => {
 
-    this.setState((lastState) => ({
-      ...lastState,
-      isLoading: true,
-    }))
-
     if (isSignInPending()) {
       try {
         const user = await handlePendingSignIn()
         if (user) {
-          this.setState((lastState) => ({
-            ...lastState,
+          this.setState(() => ({
             ...this.getInfo(user),
             loggedIn: true,
-            isLoading: false,
           }))
         }
       } catch (error) {
@@ -66,20 +58,16 @@ export default class User extends Container {
     }
   
     else if (isUserSignedIn()) {
-      this.setState((lastState) => ({
-        ...lastState,
+      this.setState(() => ({
         ...this.getInfo(),
         loggedIn: true,
-        isLoading: false,
       }))
     }
   
     else {
-      this.setState((lastState) => ({
-        ...lastState,
+      this.setState(() => ({
         ...this.initialState,
         loggedIn: false,
-        isLoading: false,
       }))
     }
   }

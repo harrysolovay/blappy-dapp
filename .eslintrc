@@ -25,6 +25,7 @@
     "no-trailing-spaces": 0,
     "brace-style": 0,
     "one-var": 0,
-    "guard-for-in": 0
+    "guard-for-in": 0,
+    "max-len": 0
   }
 }

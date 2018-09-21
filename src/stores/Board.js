@@ -40,18 +40,13 @@ export default class Board extends Container {
   // }
 
   refresh = () => {
-    if (navigator.onLine) {
-      getFile('STATE').then((state) => {
-        if (state) {
-          this.setState(JSON.parse(state))
-        }
-      }).catch((error) => {
-        console.error(error)
-      })
-      this.online = true
-    } else {
-      this.online = false
-    }
+    getFile('STATE').then((state) => {
+      if (state) {
+        this.setState(() => JSON.parse(state))
+      }
+    }).catch((error) => {
+      console.error(error)
+    })
   }
 
   storeState = () => {
@@ -166,6 +161,10 @@ export default class Board extends Container {
         return newState
       }, this.storeState)
     })
+  }
+
+  setNewOrder = (e) => {
+    console.log(e)
   }
 
 }

@@ -1,12 +1,2 @@
-import User from './User.js'
-import Board from './Board.js'
-
-const userInstance = new User()
-const boardInstance = new Board()
-
-export {
-  User,
-  Board,
-  userInstance,
-  boardInstance,
-}
+export { default as User } from './User.js'
+export { default as Board } from './Board.js'
